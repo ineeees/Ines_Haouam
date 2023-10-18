@@ -4,8 +4,12 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-
+use App\Entity\Author;
+use App\Repository\AuthorRepository;
+use Doctrine\Persistence\ManagerRegistry;
+use App\Form\AuthorType;
 class AuthorController extends AbstractController
 {
     public $authors = array(
@@ -53,4 +57,40 @@ public function authorDetails($id) : Response {
             'author' => $author,
         ]);
     }
+    #[Route('/authorBD', name: 'author_app')]
+    public function listAuthors(AuthorRepository $authorRepository): Response
+    {
+        $authors = $authorRepository->findAll(); 
+
+        return $this->render('author/authorshow.html.twig', [
+            'authors' => $authors,
+        ]);
+    }
+    #[Route('/add', name: 'add')]
+    public function AddAuthor(ManagerRegistry $doctrine , Request $request  ) 
+    {
+        $em=$doctrine ->getManager();
+        $author = new Author();
+      /*  $author->setUsername("ines");
+        $author->setEmail("ines.haoua@esprit.tn"); */ 
+        $form = $this->createForm(AuthorType::class,$author);
+        $form->handleRequest($request);
+        if($form->isSubmitted()){
+        $em->persist($author);
+        $em->flush();
+        return $this->redirectToRoute('author_app');}
+else  { 
+    return  $this->renderForm('author/add.html.twig',['f'=> $form]) ;
+ }
+    }
+    #[route('/delete/{id}', name:'delete')]
+    public function delete( $id , ManagerRegistry $doctrine) {
+        $em=$doctrine ->getManager();
+        $author = $doctrine->getRepository(Author::class)->find($id);
+        $em->remove($author);
+        $em->flush();
+        return $this->redirectToRoute('author_app');
+    }
+
+
 }
