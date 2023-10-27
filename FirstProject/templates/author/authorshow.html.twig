@@ -22,13 +22,17 @@
             <tr>
                 <td>{{ author.username }}</td>
                 <td>{{ author.email }}</td>
-                <td> <a href="{{ path('delete', {'id': author.id}) }}"> supprimer </a>  </td>
-               
+                <td>
+                    <a href="{{ path('delete', {'id': author.id}) }}">Supprimer</a>
+                    <a href="{{ path('edit_app', {'id': author.id}) }}">Modifier</a>
+                </td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
  <td> <a href={{"add"}}>Ajouter Auteur </a></td>
+  <td> <a href={{"tri"}}>TRI ASC </a></td>
+   <td> <a href={{"tridsc"}}>TRI DSC </a></td>
 </div>
 
 {% endblock %}

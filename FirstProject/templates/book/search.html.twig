@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Books{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+<div class="example-wrapper">
+<h1>Liste des livres</h1>
+<form method="post" action="{{ path('app_book_search') }}">
+    {{ form_start(f) }}
+    {{ form_row(f.title) }}
+    {{ form_end(f) }}
+</form>
+
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Reference</th>
+            <th>Titre</th>
+            <th>Catégorie</th>
+            <th>publishedDate</th>
+            <th> published </th>
+            <th>Auteur</th>
+         
+        </tr>
+    </thead>
+    <tbody>
+        {% for book in books %}
+            <tr>
+                <td>{{ book.ref }}</td>
+                <td>{{ book.title }}</td>
+                <td>{{ book.category}}</td>
+                <td>{{ book.publishedDate|date('Y-m-d')}}</td>
+                <td>
+                      {% if book.published %}
+                        Publié
+                      {%  else %}
+                          Non publié
+                      {% endif %}
+                </td>
+                 <td>{{book.author.username }}</td>
+               
+            </tr>
+        {% endfor %}
+      
+
+{% endblock %}
+

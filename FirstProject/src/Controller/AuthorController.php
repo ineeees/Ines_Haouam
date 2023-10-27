@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Author;
+use App\Entity\Book;
 use App\Repository\AuthorRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Form\AuthorType;
@@ -57,7 +58,7 @@ public function authorDetails($id) : Response {
             'author' => $author,
         ]);
     }
-    #[Route('/authorBD', name: 'author_app')]
+    #[Route('/all', name: 'author_app')]
     public function listAuthors(AuthorRepository $authorRepository): Response
     {
         $authors = $authorRepository->findAll(); 
@@ -83,7 +84,7 @@ else  {
     return  $this->renderForm('author/add.html.twig',['f'=> $form]) ;
  }
     }
-    #[route('/delete/{id}', name:'delete')]
+    #[Route('/delete/{id}', name:'delete')]
     public function delete( $id , ManagerRegistry $doctrine) {
         $em=$doctrine ->getManager();
         $author = $doctrine->getRepository(Author::class)->find($id);
@@ -91,6 +92,50 @@ else  {
         $em->flush();
         return $this->redirectToRoute('author_app');
     }
+    #[Route('/edit/{id}', name: 'edit_app')]
+public function edit($id, ManagerRegistry $doctrine, Request $request)
+{
+    $em = $doctrine->getManager();
+    $author = $doctrine->getRepository(Author::class)->find($id);
 
+    if (!$author) {
+        throw $this->createNotFoundException("L'auteur n'existe pas");
+    }
 
+    $form = $this->createForm(AuthorType::class, $author); 
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        $em->flush();
+
+        $this->addFlash('success', 'Auteur modifié');
+
+        return $this->redirectToRoute('author_app'); 
+    }
+
+    return $this->render('author/edit.html.twig', [
+        'author' => $author,
+        'form' => $form->createView(),
+    ]);
+}
+#[Route('/tri', name: 'author')]
+public function listAuthorsparusername(AuthorRepository $authorRepository): Response
+{
+    $authors = $authorRepository->triQBL(); 
+
+    return $this->render('author/authorshow.html.twig', [
+        'authors' => $authors,
+    ]);
+}
+#[Route('/tridsc', name: 'author_tri')]
+public function listAuthorsdescendantparusername(AuthorRepository $authorRepository): Response
+{
+    $authors = $authorRepository->triDBL(); 
+
+    return $this->render('author/authorshow.html.twig', [
+        'authors' => $authors,
+    ]);
+}
+
+    
 }

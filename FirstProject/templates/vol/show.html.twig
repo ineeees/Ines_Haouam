@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vol{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+<div class="example-wrapper">
+<h1>Liste des vols</h1>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>VilleDestination</th>
+            <th>Date de départ</th>
+             <th>Date d'arrivée</th>
+            <th>action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for vol in vols %}
+        {% set nbr_reservation = 0 %}
+            <tr>
+                <td>{{ vol.VilleDestination }}</td>
+                <td>{{ vol.dateDeDepart|date('Y-m-d')}}</td>
+                <td>{{ vol.dateDarrivée|date('Y-m-d')}}</td>
+                <td><a href="{{ path('add_reservation') }}">ajouter reservation </a> </td> 
+               
+                
+            </tr>
+        {% endfor %}
+      
+
+{% endblock %}
+
